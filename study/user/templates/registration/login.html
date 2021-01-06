@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+<style>
+  #login {
+    background-image: url("{% static 'img/city.jpg' %}");
+  }
+
+</style>
+
+
+{% if form.errors %}
+<div class="alert alert-warning">
+  <div class="container">
+    <div class="alert-icon">
+      <i class="material-icons">warning</i>
+    </div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"><i class="material-icons">clear</i></span>
+    </button>
+    <p>
+      <strong>Warning Alert:</strong>
+      {% if form.errors %}
+      {% for field in form %}
+      {% for error in field.errors %}
+    <div class="alert alert-danger">
+      <strong>{{ error|escape }}</strong>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+    <div class="alert alert-danger">
+      <strong>{{ error|escape }}</strong>
+    </div>
+    {% endfor %}
+    {% endif %}
+    </p>
+  </div>
+</div>
+{% endif %}
+
+
+<div id="login" class="section section-signup page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mx-auto">
+        <div class="card card-login">
+          <form class="form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="card-header card-header-primary text-center">
+              <h4 class="card-title">Login</h4>
+              <div class="social-line">
+                <a href="javascript:;" class="btn btn-just-icon btn-link">
+                  <i class="fa fa-facebook-square"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-just-icon btn-link">
+                  <i class="fa fa-twitter"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-just-icon btn-link">
+                  <i class="fa fa-google-plus"></i>
+                </a>
+              </div>
+            </div>
+            <!-- <p class="description text-center">Or Be Classical</p> -->
+            <div class="card-body pt-3 pb-5">
+              <!-- <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="material-icons">face</i>
+                  </span>
+                </div>
+                <input type="text" class="form-control" placeholder="First Name">
+              </div> -->
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="material-icons">face</i>
+                  </span>
+                </div>
+                <input type="text" name="username" id="username" class="form-control" placeholder="username">
+              </div>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="material-icons">lock_outline</i>
+                  </span>
+                </div>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="">
+              </div>
+            </div>
+            <div class="footer">
+              <!-- <a href="javascript:;" class="btn btn-primary btn-link btn-wd btn-lg">Get Started</a> -->
+              <a href="{% url 'password_reset' %}" class="btn btn-primary btn-link btn-wd ">Perdeu a Senha?</a>
+              <input type="submit" class="btn btn-wd btn-lg w-50 card-header-primary" value="login" />
+              <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

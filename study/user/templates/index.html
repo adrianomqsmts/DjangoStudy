@@ -1,1 +1,22 @@
-<h1>Configurações Iniciais Prontas</h1>
+{% extends 'base.html' %}
+
+{% block title %}Bem-vindo{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+  <h1>HOME</h1>
+
+
+  {% if user.is_authenticated %}
+  bem-vindo {{ user.username }} <br>
+  <a href="{% url 'logout' %}">logout</a>
+  {% else %}
+    <a href="{% url 'login' %}">Login</a> - 
+  <a href="{% url 'register' %}">Criar Conta</a>
+  {% endif %} <br>
+
+
+
+</div>
+{% endblock content %}
