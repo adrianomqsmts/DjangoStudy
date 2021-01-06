@@ -7,5 +7,5 @@ urlpatterns = [
     #Rota para o sistema de autenticação pronto do Django
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', RegisterCreateView.as_view(), name='register'),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login') , name='login'),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html') , name='login'),
 ]
