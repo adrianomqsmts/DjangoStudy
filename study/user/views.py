@@ -17,3 +17,23 @@ class RegisterCreateView(CreateView):
     template_name = "registration/register.html"
     #fields = ('__all__')
     success_url = reverse_lazy('login')
+
+
+class BadRequestView(TemplateView):
+    template_name = "errors/400.html"
+
+
+class ForbiddenView(TemplateView):
+    template_name = "errors/403.html"
+
+
+class PageNotFoundView(TemplateView):
+    template_name = "errors/404.html"
+
+
+class PageNotFoundView(TemplateView):
+    template_name = "errors/404.html"
+
+
+class InternalServerErrorView(TemplateView):
+    template_name = "errors/500.html"

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titlePage %} {% endblock titlePage %}</title>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet">
+
+    <!-- Custom stlylesheet -->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- CSS Files -->
+    <link href="{% static 'css/material-kit.min.css' %}" rel="stylesheet" />
+  </head>
+
+  <body>
+
+    <div id="notfound">
+      <div class="notfound">
+        <div class="notfound-404">
+          <h3>{% block title %} {% endblock title %}</h3>
+          <h1><span>{%block error1 %}{% endblock error1 %}</span><span>{% block error2 %}{% endblock error2 %}</span><span>{% block error3 %}{% endblock error3 %}</span></h1>
+        </div>
+        <p>{% block msg %} {% endblock msg %}</p>
+        <a href="{% url 'index' %}" class="btn btn-primary">Voltar ao início</a>
+      </div>
+    </div>
+
+  </body>
+  <!-- This templates was made by Colorlib (https://colorlib.com) -->
+
+</html>

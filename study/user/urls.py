@@ -9,3 +9,4 @@ urlpatterns = [
     path('accounts/register/', RegisterCreateView.as_view(), name='register'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html') , name='login'),
 ]
+
