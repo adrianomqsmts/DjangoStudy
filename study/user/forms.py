@@ -21,3 +21,19 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['username'].widget.attrs['class'] = 'form-control'
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password2'].widget.attrs['class'] = 'form-control'
+
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        # Especificando quais campos serão renderizados no formulário
+        model = User
+        fields = ('username', 'first_name', 'last_name',
+                  'email')
+
+    def __init__(self, *args, **kwargs):
+        # Inserindo a classe bootstrap para os campos padrão do formulário que já estavam criados
+        super(CustomUserChangeForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'

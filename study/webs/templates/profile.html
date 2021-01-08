@@ -1,0 +1,42 @@
+{% load static %}
+
+
+  
+<div class="card rounded bg-white text-dark text-dark">
+  <div class="container">
+    <h4 class="text-center">Meu perfil</h4>
+    <p class="text-center"><img src="{{ user.profile.profile_pic.url}}" class="rounded-circle" style="height:106px;width:106px" alt="Avatar"></p>
+  </div>
+  <div class="container">
+    <p class="lead text-center">Bem-vindo {{ user.get_full_name }}</p>
+  </div>
+  <hr>
+  <div class="bg-white text-dark p-3">
+    <button class="btn btn-primary d-block w-100 text-center"> <i class="fa fa-users" aria-hidden="true"></i> My Friends</button>
+    <button class="btn btn-primary d-block  w-100 text-center"><i class="fa fa-calendar-check-o fa-fw text-right"></i> My Events</button>
+    <button class="btn btn-primary d-block  w-100 text-center"><i class="fa fa-users fa-fw text-right"></i> My Photos</button>
+  </div>
+</div>
+
+<!-- Interests -->
+<!-- <div class="card round bg-white text-dark hide-small">
+            <div class="container">
+              <p>Interests</p>
+              <p>
+                <span class="badge-pill small bg-danger text-white">News</span>
+                <span class="badge-pill small bg-danger text-white">W3Schools</span>
+                <span class="badge-pill small bg-danger text-white">Labels</span>
+                <span class="badge-pill small bg-danger text-white">Games</span>
+                <span class="badge-pill small bg-danger text-white">Friends</span>
+                <span class="badge-pill small bg-danger text-white">Games</span>
+                <span class="badge-pill small bg-danger text-white">Friends</span>
+                <span class="badge-pill small bg-danger text-white">Food</span>
+                <span class="badge-pill small bg-danger text-white">Design</span>
+                <span class="badge-pill small bg-danger text-white">Art</span>
+                <span class="badge-pill small bg-danger text-white">Photos</span>
+              </p>
+            </div>
+          </div> -->
+
+
+  

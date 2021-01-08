@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView
 from django.contrib.auth.models import User
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 # Create your views here.
 
@@ -12,28 +12,20 @@ class HomeView(TemplateView):
 
 
 class RegisterCreateView(CreateView):
-    #model = User
+    model = User
     form_class = CustomUserCreationForm
     template_name = "registration/register.html"
     #fields = ('__all__')
     success_url = reverse_lazy('login')
 
 
-class BadRequestView(TemplateView):
-    template_name = "errors/400.html"
+class UserUpdateView(UpdateView):
+    model = User
+    form_class = CustomUserChangeForm
+    template_name = "update-user.html"
+    #fields = ('username', 'first_name', 'last_name', 'email')
+    success_url = reverse_lazy('main')
 
+    def get_object(self):
+        return self.request.user
 
-class ForbiddenView(TemplateView):
-    template_name = "errors/403.html"
-
-
-class PageNotFoundView(TemplateView):
-    template_name = "errors/404.html"
-
-
-class PageNotFoundView(TemplateView):
-    template_name = "errors/404.html"
-
-
-class InternalServerErrorView(TemplateView):
-    template_name = "errors/500.html"

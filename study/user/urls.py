@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import HomeView, RegisterCreateView
+from .views import HomeView, RegisterCreateView, UserUpdateView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -7,6 +7,8 @@ urlpatterns = [
     #Rota para o sistema de autenticação pronto do Django
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', RegisterCreateView.as_view(), name='register'),
+    path('accounts/password/', auth_views.PasswordChangeView.as_view(), name='change-password'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html') , name='login'),
+    path('accounts/update/', UserUpdateView.as_view(), name='update_user'),
 ]
 

@@ -1,0 +1,28 @@
+{% load static %}
+
+
+{% for post in posts %}
+<div class="container card bg-white text-dark round mb-3 pb-3 mt-0 pt-0"><br>
+  <span class="text-right opacity">{{ post.created_on }}</span>
+  <figure class="figure text-center">
+    <figcaption class="figure-caption text-xs-right">{{ post.author.username}}</figcaption>
+    <img src="{{ user.photo.thumb.url}}" class="figure-img img-fluid rounded" style="height:53px;width:53px" alt="{{ post.author.username }}">
+  </figure>
+  <h4>{{ post.title }}</h4>
+  <hr class="clear">
+  <p>{{ post.content }}</p>
+  <div class="row m-0">
+    <div class="col-6">
+      <button type="button" class="btn btn-primary w-100"><i class="fa fa-thumbs-up "></i> Like</button>
+    </div>
+    <div class="col-6">
+      <button type="button" class="btn  btn-primary w-100"><i class="fa fa-comment "></i> Comments </button>
+    </div>
+  </div>
+
+
+</div>
+
+{% endfor %}
+
+
