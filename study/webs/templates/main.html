@@ -69,19 +69,17 @@
           <div class="row">
             <div class="col-md-12">
               <div class="card round bg-white text-dark">
-                <div class="container">
-                  <form action="" method="post">
-                    <div class="form-group">
-                      <label for="post" class="bmd-label-floating">Escrever Mensagem</label>
-                      <textarea name="post" class="form-control" id="post" cols="12" rows="4"></textarea>
+                <div class="container pt-3 pb-3">
+                  <form action="" method="post" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="text-right">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-pencil"></i>
+                        Post
+                      </button>
                     </div>
                   </form>
-                  <div class="text-right">
-                    <button type="submit" class="btn btn-primary">
-                      <i class="fa fa-pencil"></i>
-                      Post
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>

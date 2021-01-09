@@ -3,17 +3,34 @@
 
 {% for post in posts %}
 <div class="container card bg-white text-dark round mb-3 pb-3 mt-0 pt-0"><br>
-  <span class="text-right opacity">{{ post.created_on }}</span>
-  <figure class="figure text-center">
-    <figcaption class="figure-caption text-xs-right">{{ post.author.username}}</figcaption>
-    <img src="{{ user.photo.thumb.url}}" class="figure-img img-fluid rounded" style="height:53px;width:53px" alt="{{ post.author.username }}">
-  </figure>
+  <span class="text-right opacity">{{ post.post_date }}</span>
   <h4>{{ post.title }}</h4>
-  <hr class="clear">
-  <p>{{ post.content }}</p>
+  <div class="d-flex justify-content-start">
+    <figure class="figure pr-5">
+      <figcaption class="figure-caption text-xs-right">{{ post.author.username}}</figcaption>
+      <img src="{{ post.author.profile.profile_pic.url }}" class="figure-img rounded" style="height:53px;width:53px" alt="{{ post.author.username }}">
+    </figure>
+    <div class="text-justify">
+      <p>{{ post.body }}</p>
+    </div>
+  </div>
+  {% if post.file %}
+  <div class="row p-3">
+    <div class="col-12">
+      <img src="{{ post.file.url }}" alt="{{ post.title }}" class="w-100 h-100">
+    </div>
+  </div>
+  {% endif %}
   <div class="row m-0">
     <div class="col-6">
-      <button type="button" class="btn btn-primary w-100"><i class="fa fa-thumbs-up "></i> Like</button>
+      <form action="{% url 'like_post' post.pk %}" method="POST">
+        {% csrf_token %}
+        {% if user in post.likes.all%}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-danger w-100">Unlike ({{ post.total_likes }})</button>
+        {% else %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary w-100">Like ({{ post.total_likes }})</button>
+        {% endif %}
+      </form>
     </div>
     <div class="col-6">
       <button type="button" class="btn  btn-primary w-100"><i class="fa fa-comment "></i> Comments </button>
@@ -24,5 +41,3 @@
 </div>
 
 {% endfor %}
-
-
