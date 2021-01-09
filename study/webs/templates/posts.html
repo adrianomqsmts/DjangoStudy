@@ -1,6 +1,5 @@
 {% load static %}
 
-
 {% for post in posts %}
 <div class="container card bg-white text-dark round mb-3 pb-3 mt-0 pt-0"><br>
   <span class="text-right opacity">{{ post.post_date }}</span>
@@ -23,21 +22,47 @@
   {% endif %}
   <div class="row m-0">
     <div class="col-6">
-      <form action="{% url 'like_post' post.pk %}" method="POST">
-        {% csrf_token %}
+      <form>
         {% if user in post.likes.all%}
-        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-danger w-100">Unlike ({{ post.total_likes }})</button>
+        <button type="button" name="{{post.pk}}" class="btn btn-danger w-100 {{post.btn_name_like}} " id="{{post.pk}}" ><i class="fa fa-thumbs-down" aria-hidden="true">({{ post.total_likes }})</i></button>
         {% else %}
-        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-primary w-100">Like ({{ post.total_likes }})</button>
+        <button type="button" name="{{post.pk}}" class="btn btn-primary w-100 {{post.btn_name_like}} " id="{{post.pk}}" ><i class="fa fa-thumbs-up" aria-hidden="true">({{ post.total_likes }})</i></button>
         {% endif %}
       </form>
     </div>
     <div class="col-6">
-      <button type="button" class="btn  btn-primary w-100"><i class="fa fa-comment "></i> Comments </button>
+      <a href="{% url 'comments_post' post.pk %}" class="btn btn-primary w-100"> <i class="fa fa-comments" aria-hidden="true"></i> </a>
     </div>
   </div>
-
-
 </div>
+
+
+<script>
+
+  $('.{{post.btn_name_like}}').click(function () {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'like_post' %}",
+      data: { 'post_id': '{{ post.pk }}', 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+      dataType: "json",
+      success: function (response) {
+        selector = document.getElementsByClassName('{{post.btn_name_like}}');
+        if (response.liked == true) {
+          txt = `<i class="fa fa-thumbs-down" aria-hidden="true">(` + response.total_likes + `)</i>`
+          $(selector).html(txt)
+          $(selector).removeClass("btn-primary")
+          $(selector).addClass("btn-danger")
+
+        }
+        else if (response.liked == false) {
+          txt = `<i class="fa fa-thumbs-up"" aria-hidden="true">(` + response.total_likes + `)</i>`
+          $(selector).html(txt)
+          $(selector).removeClass("btn-danger")
+          $(selector).addClass("btn-primary")
+        }
+      }
+    });
+  })
+</script>
 
 {% endfor %}

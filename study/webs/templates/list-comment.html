@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% endblock title %}
+
+{% block content %}
+
+<div class="container card bg-white text-dark round mb-3 pb-3 mt-0 pt-0"><br>
+  <span class="text-right opacity">{{ post.post_date }}</span>
+  <h1>{{ post.title }}</h1>
+  <div class="row">
+    <figure class="figure col-2">
+      <figcaption class="figure-caption text-xs-right">{{ post.author.username}}</figcaption>
+      <img src="{{ post.author.profile.profile_pic.url }}" class="figure-img rounded" style="height:53px;width:53px" alt="{{ post.author.username }}">
+    </figure>
+    <div class="text-justify col-10">
+      <p class="lead">{{ post.body }}</p>
+    </div>
+  </div>
+  {% if post.file %}
+  <div class="row p-3">
+    <div class="col-12 text-center">
+      <img src="{{ post.file.url }}" alt="{{ post.title }}" style="max-width: 50%; ">
+    </div>
+  </div>
+  {% endif %}
+  <h2>Comentários <i class="fa fa-comments-o" aria-hidden="true"></i></h2>
+  <p>
+    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#contentId" aria-expanded="false"
+        aria-controls="contentId">
+      Comentar
+    </button>
+  </p>
+  <div class="collapse" id="contentId">
+    <form action="" method="post">
+      <div class="form-group">
+        <label for=""></label>
+        <input type="text" class="form-control" name="" id="" aria-describedby="helpId" placeholder="">
+        <small id="helpId" class="form-text text-muted">Help text</small>
+      </div>
+    </form>
+  </div>
+  <hr>
+
+  {% for comment in comments %}
+  <div class="card mt-0 mb-2">
+    <div class="card-body">
+      <h4 class="card-titletext-dark">{{comment.author.username}}</h4>
+      <p class="card-text">{{comment.body}}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+{% endblock content %}

@@ -5,10 +5,13 @@ from django.shortcuts import get_object_or_404, redirect, reverse
 # Mixin que extends a funcionalidade, permite ver se se o usuário está autenticado
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, ListView
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Profile, Post
+from .models import Profile, Post, Comment
 from .forms import ProfileCreationForm, ProfileUpdateForm, PostCreationForm
+import json
+from django.core import serializers
+
 
 class ProfileExistsRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -27,7 +30,7 @@ class MainView(ProfileExistsRequiredMixin, LoginRequiredMixin, CreateView):
     model = Post
     template_name = "main.html"
     form_class = PostCreationForm
-    #fields = '__all__'
+    # fields = '__all__'
     success_url = reverse_lazy('main')
 
     def get_form_kwargs(self):
@@ -37,14 +40,49 @@ class MainView(ProfileExistsRequiredMixin, LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(MainView, self).get_context_data(**kwargs)
-        context["posts"] = Post.objects.filter(author=self.request.user)
+        friends = self.request.user.profile.friends.all()
+        posts = Post.objects.filter(author__in=friends) | Post.objects.filter(
+            author=self.request.user)
+        context['posts'] = posts.order_by('-post_date')
         return context
 
     def form_valid(self, form, *args, **kwargs):
         form.fields['author'] = self.request.user.pk
         return super(MainView, self).form_valid(form, *args, **kwargs)
 
-def likeView(request, pk):
+
+def commentView(request):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    comments = post.comments.all()
+    jsonComments = serializers.serialize("json", comments)
+    #jsonPost = serializers.serialize("json", post)
+    context={
+        "comments": jsonComments,
+        "title": post.title,
+        "body": post.body, 
+    }
+    return HttpResponse(json.dumps(context), content_type='application/json')
+
+
+class CommentListView(ListView):
+    model = Comment
+    template_name = "list-comment.html"
+    context_object_name = 'comments'
+    
+    def get_queryset(self):
+        queryset = super(CommentListView, self).get_queryset()
+        queryset = Comment.objects.filter(post = self.kwargs['pk'])
+        return queryset
+    
+    
+    def get_context_data(self, **kwargs):
+        context = super(CommentListView, self).get_context_data(**kwargs)
+        context['post'] = Post.objects.get(pk=self.kwargs['pk'])
+        return context
+    
+
+
+def likeView(request):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
     liked = False
     if(post.likes.filter(id=request.user.id).exists()):
@@ -53,14 +91,18 @@ def likeView(request, pk):
     else:
         post.likes.add(request.user)
         liked = True
-
-    return HttpResponseRedirect(reverse('main'))
+    
+    #Resposta para o ajax
+    context={
+        "liked":liked,
+        "total_likes": post.total_likes(),}
+    return HttpResponse(json.dumps(context), content_type='application/json')
 
 class ProfileCreateView(CreateView):
     model = Profile
     form_class = ProfileCreationForm
     template_name = "create-profile.html"
-    #fields = '__all__'
+    # fields = '__all__'
     success_url = reverse_lazy('main')
 
     def get_form_kwargs(self):
@@ -74,10 +116,10 @@ class ProfileCreateView(CreateView):
 
 
 class ProfileUpdateView(UpdateView):
-    #model = Profile
+    # model = Profile
     form_class = ProfileUpdateForm
     template_name = "edit-profile.html"
-    #fields = '__all__'
+    # fields = '__all__'
     success_url = reverse_lazy('main')
 
     def get_object(self):

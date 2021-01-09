@@ -31,6 +31,7 @@ class Profile(models.Model):
     facebook_url = models.CharField(max_length=255, null=True, blank=True)
     twitter_url = models.CharField(max_length=255, null=True, blank=True)
     instagram_url = models.CharField(max_length=255, null=True, blank=True)
+    friends = models.ManyToManyField(User, related_name='friends', blank=True)
 
     def __str__(self):
         return str(self.user)
@@ -48,7 +49,7 @@ class Post(models.Model):
     body = models.TextField()
     post_date = models.DateTimeField(auto_now_add=True)
     file = models.FileField(upload_to=user_post_directory_path, max_length=150, null=True, blank=True)
-    likes = models.ManyToManyField(User, related_name='likes', null=True, blank=True)
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
     
 
     class Meta:
@@ -64,6 +65,32 @@ class Post(models.Model):
 
     def total_likes(self):
         return self.likes.count()
+
+    def btn_name_like(self):
+        return "btn-" + str(self.pk)
+
+    def btn_name_comment(self):
+        return "btn-comment-" + str(self.pk)
+
+
+class Comment(models.Model):
+    """Model definition for Comment."""
+
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name="comment_author", on_delete=models.CASCADE)
+    body = models.TextField()
+    data_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """Meta definition for Comment."""
+
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
+
+    def __str__(self):
+        """Unicode representation of Post."""
+        return str(self.post) + ' commented : ' + str(self.author)
+
 
 
 @receiver(pre_save, sender=Post)
