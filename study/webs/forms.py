@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, Post
+from .models import Profile, Post, Comment
 
 
 class ProfileCreationForm(forms.ModelForm):
@@ -66,4 +66,38 @@ class PostCreationForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'file': forms.FileInput(attrs={'class': 'form-control-file'}),
+        }
+
+
+class CommentCreationForm(forms.ModelForm):
+    """Form definition for CommentCreation."""
+
+    def __init__(self, user, post, *args, **kwargs):
+        super(CommentCreationForm, self).__init__(*args, **kwargs)
+        self.fields['author'].initial = user.pk
+        self.fields['post'].initial = post.pk
+
+    class Meta:
+        """Meta definition for CommentCreationform."""
+
+        model = Comment
+        fields = ('author', 'body', 'post')
+
+        widgets = {
+            'author': forms.TextInput(attrs={'class': 'form-control', 'value': '', 'type': 'hidden'}),
+            'body': forms.Textarea(attrs={'class': 'form-control'}),
+            'post': forms.TextInput(attrs={'class': 'form-control', 'value': '', 'type': 'hidden'}),
+        }
+
+class CommentUpdateForm(forms.ModelForm):
+    """Form definition for CommentUpdate."""
+
+    class Meta:
+        """Meta definition for CommentUpdateform."""
+
+        model = Comment
+        fields = ('body',)
+
+        widgets = {
+            'body': forms.Textarea(attrs={'class': 'form-control'}),
         }

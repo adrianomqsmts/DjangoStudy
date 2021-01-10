@@ -8,9 +8,32 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView, CreateView, ListView
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Profile, Post, Comment
-from .forms import ProfileCreationForm, ProfileUpdateForm, PostCreationForm
+from .forms import ProfileCreationForm, ProfileUpdateForm, PostCreationForm, CommentCreationForm, CommentUpdateForm
 import json
 from django.core import serializers
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+
+
+def commentUpdateView(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = CommentUpdateForm(request.POST, instance=comment)
+        # check whether it's valid:
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.save()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def commentDeleteView(request, pk):
+    comment = get_object_or_404(Comment, id=pk)
+    comment.delete()
+    messages.success(request, 'O comentário foi removido com sucesso')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 class ProfileExistsRequiredMixin:
@@ -56,30 +79,41 @@ def commentView(request):
     comments = post.comments.all()
     jsonComments = serializers.serialize("json", comments)
     #jsonPost = serializers.serialize("json", post)
-    context={
+    context = {
         "comments": jsonComments,
         "title": post.title,
-        "body": post.body, 
+        "body": post.body,
     }
     return HttpResponse(json.dumps(context), content_type='application/json')
 
 
-class CommentListView(ListView):
+class CommentCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Comment
+    form_class = CommentCreationForm
     template_name = "list-comment.html"
-    context_object_name = 'comments'
-    
-    def get_queryset(self):
-        queryset = super(CommentListView, self).get_queryset()
-        queryset = Comment.objects.filter(post = self.kwargs['pk'])
-        return queryset
-    
-    
+    #fields = '__all__'
+    #success_url = reverse_lazy('')
+
+    success_message = "Comment was created successfully"
+
+    def get_success_url(self):
+        return self.request.path
+
+    def get_form_kwargs(self):
+        form = super().get_form_kwargs()
+        form['user'] = self.request.user
+        form['post'] = Post.objects.get(pk=self.kwargs['pk'])
+        return form
+
     def get_context_data(self, **kwargs):
-        context = super(CommentListView, self).get_context_data(**kwargs)
+        context = super(CommentCreateView, self).get_context_data(**kwargs)
         context['post'] = Post.objects.get(pk=self.kwargs['pk'])
+        context['comments'] = Comment.objects.filter(post=self.kwargs['pk'])
         return context
-    
+
+    def form_valid(self, form, *args, **kwargs):
+        form.fields['author'] = self.request.user.pk
+        return super(CommentCreateView, self).form_valid(form, *args, **kwargs)
 
 
 def likeView(request):
@@ -91,14 +125,15 @@ def likeView(request):
     else:
         post.likes.add(request.user)
         liked = True
-    
-    #Resposta para o ajax
-    context={
-        "liked":liked,
-        "total_likes": post.total_likes(),}
+
+    # Resposta para o ajax
+    context = {
+        "liked": liked,
+        "total_likes": post.total_likes(), }
     return HttpResponse(json.dumps(context), content_type='application/json')
 
-class ProfileCreateView(CreateView):
+
+class ProfileCreateView(LoginRequiredMixin, CreateView):
     model = Profile
     form_class = ProfileCreationForm
     template_name = "create-profile.html"
@@ -115,7 +150,7 @@ class ProfileCreateView(CreateView):
         return super(ProfileCreateView, self).form_valid(form, *args, **kwargs)
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     # model = Profile
     form_class = ProfileUpdateForm
     template_name = "edit-profile.html"

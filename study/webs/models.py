@@ -86,11 +86,14 @@ class Comment(models.Model):
 
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
+        ordering = ['-data_added']
 
     def __str__(self):
         """Unicode representation of Post."""
         return str(self.post) + ' commented : ' + str(self.author)
 
+    def btn_name_remove(self):
+        return "btn-remove-" + str(self.pk)
 
 
 @receiver(pre_save, sender=Post)
